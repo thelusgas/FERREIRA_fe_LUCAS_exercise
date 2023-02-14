@@ -1,4 +1,4 @@
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import TeamOverview from './pages/TeamOverview';
 import Teams from './pages/Teams';
 import UserOverview from './pages/UserOverview';

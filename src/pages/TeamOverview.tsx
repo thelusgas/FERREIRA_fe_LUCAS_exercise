@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {useLocation, useParams} from 'react-router-dom';
-import {ListItem, UserData} from 'types';
-import {getTeamOverview, getUserData} from '../api';
+import { useLocation, useParams } from 'react-router-dom';
+import { ListItem, UserData } from 'types';
+import { getTeamOverview, getUserData } from '../api';
 import Card from '../components/Card';
-import {Container} from '../components/GlobalComponents';
+import { Container } from '../components/GlobalComponents';
 import Header from '../components/Header';
 import List from '../components/List';
 
@@ -61,13 +61,13 @@ interface PageState {
 
 const TeamOverview = () => {
   const location = useLocation();
-  const {teamId} = useParams();
+  const { teamId } = useParams();
   const [pageData, setPageData] = React.useState<PageState>({});
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     var getTeamUsers = async () => {
-      const {teamLeadId, teamMemberIds = []} = await getTeamOverview(teamId);
+      const { teamLeadId, teamMemberIds = [] } = await getTeamOverview(teamId);
       const teamLead = await getUserData(teamLeadId);
 
       const teamMembers = [];

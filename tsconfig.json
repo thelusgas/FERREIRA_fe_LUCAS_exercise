@@ -15,15 +15,17 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
     "paths": {
-      "@temposoftware/tempo-i18n": ["./translate.ts"],
-      "@api/*": ["./api/*"],
-      "@components/*": ["./component/*"],
-      "@pages/*": ["./pages/*"],
-      "@types/*": ["./types/*"]
+      "@temposoftware/tempo-i18n": ["./src/translate.ts"],
+      "@api/*": ["./src/api/*"],
+      "@components/*": ["./src/components/*"],
+      "@interfaces/*": ["./src/interfaces/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@styles/*": ["./src/styles/*"]
     }
   },
   "include": ["src", "eslintrc.cjs"],
-  "references": [{"path": "./tsconfig.node.json"}],
+  "references": [{ "path": "./tsconfig.node.json" }],
   "exclude": ["node_modules"]
 }
