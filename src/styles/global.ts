@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
-import { reset } from './reset';
 
-import { fontSizes, fontFamiles, fontWeights } from './abstracts/font';
+import { fontFamiles, fontSizes, fontWeights } from './abstracts';
+import { reset } from './reset';
 
 const styled = { createGlobalStyle };
 
@@ -25,7 +25,11 @@ export const GlobalStyle = styled.createGlobalStyle`
       }
 
       display: grid;
-      grid-template-rows: auto 1fr auto;
+      grid-template-rows: auto 1fr;
+      gap: 2rem;
+
+      background: ${({ theme }) => theme.color.background};
+      color: ${({ theme }) => theme.color.onBackground};
     }
   }
 `;

@@ -1,5 +1,6 @@
-import * as React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import * as React from 'react';
+
 import * as API from '../../api';
 import TeamOverview from '../TeamOverview';
 
@@ -42,8 +43,8 @@ describe('TeamOverview', () => {
       location: '',
       avatar: '',
     };
-    jest.spyOn(API, 'getTeamOverview').mockImplementationOnce(() => Promise.resolve({} as any));
-    jest.spyOn(API, 'getUserData').mockImplementationOnce(() => Promise.resolve({} as any));
+    jest.spyOn(API, 'getTeamExtended').mockImplementationOnce(() => Promise.resolve({} as any));
+    jest.spyOn(API, 'getTeamMember').mockImplementationOnce(() => Promise.resolve({} as any));
 
     render(<TeamOverview />);
 

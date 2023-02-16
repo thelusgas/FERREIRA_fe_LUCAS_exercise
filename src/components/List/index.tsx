@@ -1,34 +1,80 @@
-import * as React from 'react';
-import { ListItem } from 'types';
-import Card from '../Card';
-import { Spinner } from '../Spinner';
+import { Spinner } from '@components/Spinner';
+import { ListItem } from '@interfaces/data';
+import { useQueries } from '@tanstack/react-query';
+
+import { Card } from '../Card';
 import { Container } from './styles';
 
-interface Props {
-  items?: ListItem[];
-  hasNavigation?: boolean;
-  isLoading: string;
+interface RegularListProps {
+  items: ListItem[];
 }
 
-const List = ({ items, hasNavigation = true, isLoading }: Props) => {
+interface ItemQuery<T extends object> {
+  discriminator: keyof T & string;
+  queryFn: () => Promise<T>;
+}
+
+interface AsyncListProps<T extends object> {
+  parseFn: (data: T) => ListItem;
+  queryKey: string[];
+  queries: ItemQuery<T>[];
+}
+
+export type ListProps<T extends object> =
+  | ({
+      async?: false;
+    } & RegularListProps)
+  | ({
+      async: true;
+    } & AsyncListProps<T>);
+
+function RegularList({ items }: RegularListProps) {
   return (
     <Container>
-      {isLoading && <Spinner />}
-      {!isLoading &&
-        items.map(({ url, id, columns, navigationProps }, index) => {
-          return (
-            <Card
-              key={`${id}-${index}`}
-              id={id}
-              columns={columns}
-              navigationProps={navigationProps}
-              hasNavigation={hasNavigation}
-              url={url}
-            />
-          );
-        })}
+      {items.map(item => {
+        return (
+          <Card key={`${item.id}`} id={item.id} url={item.url}>
+            {item.children}
+          </Card>
+        );
+      })}
     </Container>
   );
-};
+}
 
-export default List;
+function AsyncList<T extends object>({ queries, queryKey, parseFn }: AsyncListProps<T>) {
+  const res = useQueries({
+    queries: queries.map(query => ({
+      queryKey: [[...queryKey], query.discriminator],
+      queryFn: () => query.queryFn(),
+    })),
+  });
+
+  return (
+    <Container>
+      {res.map(r => {
+        const itemKey = `list-item-${Math.random()}`;
+        if (r.isLoading) {
+          return <Spinner key={itemKey} />;
+        }
+        if (r.data) {
+          const { children, ...parsedData } = parseFn(r.data);
+          return (
+            <Card {...parsedData} key={itemKey}>
+              {children}
+            </Card>
+          );
+        }
+        return <div key={itemKey}>error</div>;
+      })}
+    </Container>
+  );
+}
+
+export function List<T extends object>({ async, ...rest }: ListProps<T>) {
+  if ('parseFn' in rest) {
+    return <AsyncList<T> {...rest} />;
+  }
+
+  return <RegularList {...rest} />;
+}

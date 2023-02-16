@@ -1,46 +1,35 @@
-import * as React from 'react';
-import { ListItem, Teams as TeamsList } from 'types';
-import { getTeams as fetchTeams } from '../api';
-import Header from '../components/Header';
-import List from '../components/List';
-import { Container } from '../components/GlobalComponents';
+import { Layout } from '@components/Layout';
+import { List } from '@components/List';
+import { Spinner } from '@components/Spinner';
+import { ListItem, Team } from '@interfaces/data';
+import { useQuery } from '@tanstack/react-query';
 
-var MapT = (teams: TeamsList[]) => {
+import { getTeams } from '../api';
+
+const MapTeamsToList = (teams: Team[]) => {
   return teams.map(team => {
-    var columns = [
-      {
-        key: 'Name',
-        value: team.name,
-      },
-    ];
     return {
       id: team.id,
       url: `/team/${team.id}`,
-      columns,
-      navigationProps: team,
+      children: team.name,
     } as ListItem;
   });
 };
 
-const Teams = () => {
-  const [teams, setTeams] = React.useState<any>([]);
-  const [isLoading, setIsLoading] = React.useState<any>(true);
+export function Teams() {
+  const { data: teams, error, isLoading } = useQuery<Team[]>(['teams'], getTeams);
 
-  React.useEffect(() => {
-    const getTeams = async () => {
-      const response = await fetchTeams();
-      setTeams(response);
-      setIsLoading(false);
-    };
-    getTeams();
-  }, []);
+  if (isLoading) {
+    return <Spinner />;
+  }
 
-  return (
-    <Container>
-      <Header title="Teams" showBackButton={false} />
-      <List items={MapT(teams)} isLoading={isLoading} />
-    </Container>
-  );
-};
+  if (teams) {
+    return (
+      <Layout title="Teams" showBackButton={false}>
+        <List items={MapTeamsToList(teams)} />
+      </Layout>
+    );
+  }
 
-export default Teams;
+  return <div>{typeof error === 'string' ? error : 'something went wrong'}</div>;
+}

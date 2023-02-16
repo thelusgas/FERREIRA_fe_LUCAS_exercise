@@ -1,7 +1,7 @@
-import React from 'react';
+import { Team } from '@interfaces/data';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Teams } from '@interfaces/data';
-import Card from '..';
+
+import { Card } from '..';
 
 const mockUseNavigate = jest.fn();
 
@@ -15,7 +15,7 @@ describe('Card', () => {
     const columns = [{ key: 'columnKey', value: 'columnValue' }];
     render(<Card columns={columns} />);
 
-    expect(screen.getByText('columnKey')).toBeInTheDocument();
+    expect(screen.getByText('columnKey')).tob;
     expect(screen.getByText('columnValue')).toBeInTheDocument();
   });
 
@@ -41,7 +41,7 @@ describe('Card', () => {
     const navProps = {
       id: '1',
       name: 'Team 1',
-    } as Teams;
+    } as Team;
     render(
       <Card
         columns={[{ key: 'columnKey', value: 'columnValue' }]}

@@ -18,6 +18,6 @@ export const darkTheme: DefaultTheme = {
     onSecondaryContainer: '#E8DEF8',
 
     surface: '#1C1B1F',
-    onSurface: '##E6E1E5',
+    onSurface: '#E6E1E5',
   },
 };

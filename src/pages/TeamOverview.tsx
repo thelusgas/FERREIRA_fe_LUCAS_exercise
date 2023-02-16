@@ -1,96 +1,57 @@
-import * as React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { ListItem, UserData } from 'types';
-import { getTeamOverview, getUserData } from '../api';
-import Card from '../components/Card';
-import { Container } from '../components/GlobalComponents';
-import Header from '../components/Header';
-import List from '../components/List';
+import { Layout } from '@components/Layout';
+import { List } from '@components/List';
+import { MemberCard } from '@components/MemberCard';
+import { Spinner } from '@components/Spinner';
+import { ListItem, TeamExtended, TeamMember } from '@interfaces/data';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
-var mapArray = (users: UserData[]) => {
-  return users.map(u => {
-    var columns = [
-      {
-        key: 'Name',
-        value: `${u.firstName} ${u.lastName}`,
-      },
-      {
-        key: 'Display Name',
-        value: u.displayName,
-      },
-      {
-        key: 'Location',
-        value: u.location,
-      },
-    ];
-    return {
-      id: u.id,
-      url: `/user/${u.id}`,
-      columns,
-      navigationProps: u,
-    };
-  }) as ListItem[];
-};
+import { getTeamExtended, getTeamMember } from '../api';
 
-var mapTLead = tlead => {
-  var columns = [
-    {
-      key: 'Team Lead',
-      value: '',
-    },
-    {
-      key: 'Name',
-      value: `${tlead.firstName} ${tlead.lastName}`,
-    },
-    {
-      key: 'Display Name',
-      value: tlead.displayName,
-    },
-    {
-      key: 'Location',
-      value: tlead.location,
-    },
-  ];
-  return <Card columns={columns} url={`/user/${tlead.id}`} navigationProps={tlead} />;
-};
+export function TeamOverview() {
+  const { teamId } = useParams<{ teamId: string }>();
 
-interface PageState {
-  teamLead?: UserData;
-  teamMembers?: UserData[];
+  if (!teamId) {
+    throw new Error('team ID not found');
+  }
+
+  const {
+    data: team,
+    isLoading,
+    error,
+  } = useQuery<TeamExtended>(['teams', teamId], () => getTeamExtended(teamId));
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (team) {
+    const queries = team.teamMemberIds.map(id => {
+      return {
+        discriminator: id as keyof TeamMember & string,
+        queryFn: () => getTeamMember(id),
+      };
+    });
+
+    return (
+      <Layout title={team.name} subtitle="team" showBackButton>
+        <List<TeamMember>
+          queryKey={['team', 'member']}
+          queries={queries}
+          parseFn={parseUserToListItem}
+          async
+        />
+      </Layout>
+    );
+  }
+
+  return <div>{typeof error === 'string' ? error : 'something went wrong'}</div>;
 }
 
-const TeamOverview = () => {
-  const location = useLocation();
-  const { teamId } = useParams();
-  const [pageData, setPageData] = React.useState<PageState>({});
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    var getTeamUsers = async () => {
-      const { teamLeadId, teamMemberIds = [] } = await getTeamOverview(teamId);
-      const teamLead = await getUserData(teamLeadId);
-
-      const teamMembers = [];
-      for (var teamMemberId of teamMemberIds) {
-        const data = await getUserData(teamMemberId);
-        teamMembers.push(data);
-      }
-      setPageData({
-        teamLead,
-        teamMembers,
-      });
-      setIsLoading(false);
-    };
-    getTeamUsers();
-  }, [teamId]);
-
-  return (
-    <Container>
-      <Header title={`Team ${location.state.name}`} />
-      {!isLoading && mapTLead(pageData.teamLead)}
-      <List items={mapArray(pageData?.teamMembers ?? [])} isLoading={isLoading} />
-    </Container>
-  );
+const parseUserToListItem = (data: TeamMember): ListItem => {
+  return {
+    id: data.id,
+    url: `/user/${data.id}`,
+    children: <MemberCard member={data} />,
+  };
 };
-
-export default TeamOverview;

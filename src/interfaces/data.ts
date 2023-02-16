@@ -1,31 +1,26 @@
-export interface Teams {
+import { ReactNode } from 'react';
+
+export interface Team {
   id: string;
   name: string;
 }
 
-export interface TeamOverview {
-  id: string;
+export interface TeamExtended extends Team {
   teamLeadId: string;
   teamMemberIds: string[];
 }
 
-export interface UserData {
+export interface TeamMember {
   id: string;
   firstName: string;
   lastName: string;
   displayName: string;
   location: string;
-  avatar: string;
-}
-
-export interface ListItemColumn {
-  key: string;
-  value: string;
+  avatarUrl: string;
 }
 
 export interface ListItem {
   id: string;
   url?: string;
-  columns: Array<ListItemColumn>;
-  navigationProps?: UserData | Teams;
+  children: ReactNode;
 }

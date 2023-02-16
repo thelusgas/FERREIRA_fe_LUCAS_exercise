@@ -17,7 +17,7 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
-  plugins: ['react', '@typescript-eslint', 'prettier'],
+  plugins: ['react', '@typescript-eslint', 'simple-import-sort', 'prettier'],
   rules: {
     'react/react-in-jsx-scope': 'off',
     'react/require-default-props': 'off',
@@ -32,5 +32,10 @@ module.exports = {
         allowAsStatement: true,
       },
     ],
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
+    'react-hooks/exhaustive-deps': 'error',
+    'no-console': 'warn',
+    '@typescript-eslint/no-use-before-define': 'off',
   },
 };
