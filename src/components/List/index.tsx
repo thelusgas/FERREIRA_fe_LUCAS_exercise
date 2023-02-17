@@ -1,5 +1,5 @@
 import { Spinner } from '@components/Spinner';
-import { ListItem } from '@interfaces/data';
+import { ListItem } from '@interfaces/lib';
 import { useQueries } from '@tanstack/react-query';
 
 import { Card } from '../Card';

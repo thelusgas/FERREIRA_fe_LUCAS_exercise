@@ -7,6 +7,7 @@ export default defineConfig({
     alias: [
       { find: '@api', replacement: path.resolve(__dirname, 'src/api') },
       { find: '@components', replacement: path.resolve(__dirname, 'src/components') },
+      { find: '@helpers', replacement: path.resolve(__dirname, 'src/helpers') },
       { find: '@interfaces', replacement: path.resolve(__dirname, 'src/interfaces') },
       { find: '@pages', replacement: path.resolve(__dirname, 'src/pages') },
       { find: '@styles', replacement: path.resolve(__dirname, 'src/styles') },

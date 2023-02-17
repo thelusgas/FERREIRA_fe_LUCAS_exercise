@@ -1,12 +1,12 @@
-// components
 import { getTeamMember } from '@api/index';
+// components
 import { Layout } from '@components/Layout';
 import { MemberCard } from '@components/MemberCard';
 import { Spinner } from '@components/Spinner';
 // types
 import { TeamMember } from '@interfaces/data';
-import { useQuery } from '@tanstack/react-query';
 // deps
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
 export function TeamMemberOverview() {

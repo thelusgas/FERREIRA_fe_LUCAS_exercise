@@ -2,11 +2,12 @@ import { Layout } from '@components/Layout';
 import { List } from '@components/List';
 import { Search } from '@components/Search';
 import { Spinner } from '@components/Spinner';
-import { ListItem, Team } from '@interfaces/data';
+import { useSearch } from '@helpers/use-search';
+import { Team } from '@interfaces/data';
+import { ListItem } from '@interfaces/lib';
 import { useQuery } from '@tanstack/react-query';
 
 import { getTeams } from '../api';
-import { useSearch } from '../helpers/use-search';
 
 const MapTeamsToList = (teams: Team[]) => {
   return teams.map(team => {

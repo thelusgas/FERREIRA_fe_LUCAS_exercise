@@ -3,7 +3,8 @@ import { List } from '@components/List';
 import { MemberCard } from '@components/MemberCard';
 import { Search } from '@components/Search';
 import { Spinner } from '@components/Spinner';
-import { ListItem, TeamExtended, TeamMember } from '@interfaces/data';
+import { TeamExtended, TeamMember } from '@interfaces/data';
+import { ListItem } from '@interfaces/lib';
 import { useQuery } from '@tanstack/react-query';
 import { ChangeEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -60,10 +61,10 @@ export function TeamOverview() {
         {teamLead.isSuccess && <MemberCard member={teamLead.data} isTeamLead />}
 
         <List<TeamMember>
+          async
           queryKey={['team', 'member']}
           queries={queries}
           parseFn={parseUserToListItem}
-          async
           search={{
             searchKey: 'displayName',
             searchValue: filter,

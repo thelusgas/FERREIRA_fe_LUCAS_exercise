@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 export interface Team {
   id: string;
   name: string;
@@ -17,10 +15,4 @@ export interface TeamMember {
   displayName: string;
   location: string;
   avatarUrl: string;
-}
-
-export interface ListItem {
-  id: string;
-  url?: string;
-  children: ReactNode;
 }
