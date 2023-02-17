@@ -1,73 +1,94 @@
-import React from 'react';
-import {render, screen} from '@testing-library/react';
-import List from '..';
+import { render, screen } from '@testing-library/react';
+import { AllTheProviders, renderWithClient } from '@tests/utils';
+import * as React from 'react';
+
+import { AsyncListProps, List } from '..';
 
 jest.mock('react-router-dom', () => ({
-    ...(jest.requireActual('react-router-dom') as any),
-    useNavigate: () => jest.fn(),
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => jest.fn(),
 }));
 
+const mockedQueryFnFirst = jest
+  .fn()
+  .mockResolvedValue({ id: '1', name: 'mockedGuy1', coolGuyPoints: 1 });
+
+const mockedQueryFnSecond = jest
+  .fn()
+  .mockResolvedValue({ id: '2', name: 'mockedGuy2', coolGuyPoints: 2 });
+
+const mockedQueryFnThird = jest
+  .fn()
+  .mockResolvedValue({ id: '3', name: 'mockedGuy3', coolGuyPoints: 3 });
+
+interface MockedGuy {
+  id: string;
+  name: string;
+  coolGuyPoints: number;
+}
+
+const mockedQueryKey = ['mockedGuy'];
+
+const mockedParseFn: AsyncListProps<MockedGuy>['parseFn'] = (data: MockedGuy) => {
+  return {
+    id: data.id,
+    children: (
+      <>
+        {data.name}
+        {data.coolGuyPoints}
+      </>
+    ),
+  };
+};
+
+const mockedQueries: AsyncListProps<MockedGuy>['queries'] = [
+  {
+    discriminator: 'id',
+    queryFn: mockedQueryFnFirst,
+  },
+  {
+    discriminator: 'id',
+    queryFn: mockedQueryFnSecond,
+  },
+  {
+    discriminator: 'id',
+    queryFn: mockedQueryFnThird,
+  },
+];
+
 describe('List', () => {
-    it('should render spinner and not render items when it is loading', () => {
-        const items = [
-            {
-                id: '1',
-                columns: [
-                    {
-                        key: 'columnKey1',
-                        value: 'columnValue1',
-                    },
-                ],
-            },
-        ];
-        render(<List isLoading items={items} />);
+  it('should render as regular list when not given the async flag as param', () => {
+    const items = [
+      {
+        id: 'first',
+        children: <>first</>,
+      },
+      {
+        id: 'second',
+        children: <>first</>,
+      },
+      {
+        id: 'third',
+        children: <>first</>,
+      },
+    ];
+    render(<List items={items} />, { wrapper: AllTheProviders });
+    expect(screen.getByTestId('regular-list')).toBeInTheDocument();
 
-        expect(screen.getByTestId('spinner')).toBeInTheDocument();
-        expect(screen.queryByTestId('cardContainer')).not.toBeInTheDocument();
-    });
+    expect(screen.getByTestId('cardContainer-first')).toBeInTheDocument();
+  });
 
-    it('should not render spinner and render items when it is not loading', () => {
-        const items = [
-            {
-                id: '1',
-                columns: [
-                    {
-                        key: 'columnKey1',
-                        value: 'columnValue1',
-                    },
-                ],
-            },
-        ];
-        render(<List isLoading={false} items={items} />);
+  it('should asynchronously load its children when given the async flag', async () => {
+    const list = renderWithClient(
+      <List<MockedGuy>
+        async
+        parseFn={mockedParseFn}
+        queries={mockedQueries}
+        queryKey={mockedQueryKey}
+      />
+    );
 
-        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
-        expect(screen.getByTestId('cardContainer-1')).toBeInTheDocument();
-    });
-
-    it('should render multiple card when multiple items', () => {
-        const items = [
-            {
-                id: '1',
-                columns: [
-                    {
-                        key: 'columnKey1',
-                        value: 'columnValue1',
-                    },
-                ],
-            },
-            {
-                id: '2',
-                columns: [
-                    {
-                        key: 'columnKey2',
-                        value: 'columnValue2',
-                    },
-                ],
-            },
-        ];
-        render(<List isLoading={false} items={items} />);
-
-        expect(screen.getByTestId('cardContainer-1')).toBeInTheDocument();
-        expect(screen.getByTestId('cardContainer-2')).toBeInTheDocument();
-    });
+    expect(await list.getByTestId('async-list')).toBeInTheDocument();
+    expect(mockedQueryFnFirst).toHaveBeenCalled();
+  });
 });

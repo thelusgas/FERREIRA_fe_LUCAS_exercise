@@ -1,48 +1,25 @@
-import * as React from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Teams, UserData} from 'types';
-import {Container} from './styles';
+import { ReactNode } from 'react';
 
-interface Props {
-    id?: string;
-    url?: string;
-    columns: Array<{
-        key: string;
-        value: string;
-    }>;
-    hasNavigation?: boolean;
-    navigationProps?: UserData | Teams;
+import * as Styles from './styles';
+
+interface CardProps {
+  id?: string;
+  children: ReactNode;
+  url?: string;
 }
 
-const Card = ({
-    id,
-    columns,
-    url,
-    hasNavigation = true,
-    navigationProps = null,
-}: Props): JSX.Element => {
-    const navigate = useNavigate();
-
-    return (
-        <Container
-            data-testid={`cardContainer-${id}`}
-            hasNavigation={hasNavigation}
-            onClick={(e: Event) => {
-                if (hasNavigation) {
-                    navigate(url, {
-                        state: navigationProps,
-                    });
-                }
-                e.preventDefault();
-            }}
-        >
-            {columns.map(({key: columnKey, value}) => (
-                <p key={columnKey}>
-                    <strong>{columnKey}</strong>&nbsp;{value}
-                </p>
-            ))}
-        </Container>
-    );
-};
-
-export default Card;
+export function Card({ id, children, url }: CardProps) {
+  return url ? (
+    <Styles.ListItem>
+      <Styles.Container to={url} data-testid={`cardContainer-${id}`} $hasNavigation>
+        {children}
+      </Styles.Container>
+    </Styles.ListItem>
+  ) : (
+    <Styles.ListItem>
+      <Styles.Container as="div" data-testid={`cardContainer-${id}`}>
+        {children}
+      </Styles.Container>
+    </Styles.ListItem>
+  );
+}

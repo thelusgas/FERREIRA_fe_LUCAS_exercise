@@ -1,21 +1,24 @@
-import {Teams, TeamOverview, UserData} from 'types';
+import { Url } from '@api/url';
+import { Team, TeamExtended, TeamMember } from '@interfaces/data';
 
-const getData = async (path = '') => {
-    const url = `${process.env.REACT_APP_API_BASE_URL}/${path}`;
-    const res = await fetch(url);
-    const json = await res.json();
+export const getData = async <T extends object>(url: string): Promise<T> => {
+  const res = await fetch(url);
 
-    return json;
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+
+  return res.json();
 };
 
-export const getTeams = (): Promise<Teams[]> => {
-    return getData('teams');
+export const getTeams = (): Promise<Team[]> => {
+  return getData(Url.TEAMS);
 };
 
-export const getTeamOverview = (teamId: string): Promise<TeamOverview> => {
-    return getData(`teams/${teamId}`);
+export const getTeamExtended = (teamId: string): Promise<TeamExtended> => {
+  return getData(`${Url.TEAMS}/${teamId}`);
 };
 
-export const getUserData = (userId: string): Promise<UserData> => {
-    return getData(`users/${userId}`);
+export const getTeamMember = (userId: string): Promise<TeamMember> => {
+  return getData(`${Url.USERS}/${userId}`);
 };

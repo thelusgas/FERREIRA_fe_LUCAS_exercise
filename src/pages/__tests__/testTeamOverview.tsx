@@ -1,54 +1,61 @@
+import { GlobalContextWrapper } from '@components/GlobalContextWrapper';
+import { TeamExtended, TeamMember } from '@interfaces/data';
+import { render, screen, waitFor } from '@testing-library/react';
 import * as React from 'react';
-import {render, screen, waitFor} from '@testing-library/react';
-import * as API from '../../api';
-import TeamOverview from '../TeamOverview';
+
+import * as api from '../../api';
+import { TeamOverview } from '../TeamOverview';
 
 jest.mock('react-router-dom', () => ({
-    useLocation: () => ({
-        state: {
-            teamName: 'Some Team',
-        },
-    }),
-    useNavigate: () => ({}),
-    useParams: () => ({
-        teamId: '1',
-    }),
+  useNavigate: () => ({}),
+  useParams: () => ({
+    teamId: '1',
+  }),
+  Link: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+jest.mock('@helpers/constants', () => ({
+  baseUrl: 'www.google.com',
 }));
 
 describe('TeamOverview', () => {
-    beforeAll(() => {
-        jest.useFakeTimers();
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  it('should render team overview users', async () => {
+    const teamOverview = {
+      id: '1',
+      teamLeadId: '2',
+      teamMemberIds: ['3', '4', '5'],
+    };
+    const userData = {
+      id: '2',
+      firstName: 'userData',
+      lastName: '',
+      displayName: 'userData',
+      location: 'userData',
+      avatarUrl: '',
+    };
+    jest
+      .spyOn(api, 'getTeamExtended')
+      .mockImplementationOnce(() => Promise.resolve(teamOverview as TeamExtended));
+    jest
+      .spyOn(api, 'getTeamMember')
+      .mockImplementationOnce(() => Promise.resolve(userData as TeamMember));
+
+    render(<TeamOverview />, { wrapper: GlobalContextWrapper });
+
+    await waitFor(() => {
+      expect(screen.queryAllByText('userData')).toHaveLength(3);
     });
-
-    afterEach(() => {
-        jest.clearAllTimers();
-    });
-
-    afterAll(() => {
-        jest.useRealTimers();
-    });
-
-    it('should render team overview users', async () => {
-        const teamOverview = {
-            id: '1',
-            teamLeadId: '2',
-            teamMemberIds: ['3', '4', '5'],
-        };
-        const userData = {
-            id: '2',
-            firstName: 'userData',
-            lastName: 'userData',
-            displayName: 'userData',
-            location: '',
-            avatar: '',
-        };
-        jest.spyOn(API, 'getTeamOverview').mockImplementationOnce(() => Promise.resolve({} as any));
-        jest.spyOn(API, 'getUserData').mockImplementationOnce(() => Promise.resolve({} as any));
-
-        render(<TeamOverview />);
-
-        await waitFor(() => {
-            expect(screen.queryAllByText('userData')).toHaveLength(4);
-        });
-    });
+  });
 });
