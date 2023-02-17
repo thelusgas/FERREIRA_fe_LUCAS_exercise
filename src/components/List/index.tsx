@@ -18,6 +18,10 @@ interface AsyncListProps<T extends object> {
   parseFn: (data: T) => ListItem;
   queryKey: string[];
   queries: ItemQuery<T>[];
+  search?: {
+    searchKey: keyof T & string;
+    searchValue: string;
+  };
 }
 
 export type ListProps<T extends object> =
@@ -42,13 +46,31 @@ function RegularList({ items }: RegularListProps) {
   );
 }
 
-function AsyncList<T extends object>({ queries, queryKey, parseFn }: AsyncListProps<T>) {
+function AsyncList<T extends object>({ queries, queryKey, parseFn, search }: AsyncListProps<T>) {
   const res = useQueries({
     queries: queries.map(query => ({
       queryKey: [[...queryKey], query.discriminator],
       queryFn: () => query.queryFn(),
     })),
   });
+
+  const isFiltered = (item: T) => {
+    if (!search) {
+      return false;
+    }
+
+    if (search.searchValue === '') {
+      return false;
+    }
+
+    const itemKeyValue = item[search.searchKey];
+
+    if (typeof itemKeyValue !== 'string') {
+      return false;
+    }
+
+    return !itemKeyValue.toLowerCase().includes(search.searchValue.toLowerCase());
+  };
 
   return (
     <Container>
@@ -58,6 +80,10 @@ function AsyncList<T extends object>({ queries, queryKey, parseFn }: AsyncListPr
           return <Spinner key={itemKey} />;
         }
         if (r.data) {
+          if (isFiltered(r.data)) {
+            return null;
+          }
+
           const { children, ...parsedData } = parseFn(r.data);
           return (
             <Card {...parsedData} key={itemKey}>

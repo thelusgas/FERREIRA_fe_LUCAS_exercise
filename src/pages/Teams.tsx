@@ -1,10 +1,12 @@
 import { Layout } from '@components/Layout';
 import { List } from '@components/List';
+import { Search } from '@components/Search';
 import { Spinner } from '@components/Spinner';
 import { ListItem, Team } from '@interfaces/data';
 import { useQuery } from '@tanstack/react-query';
 
 import { getTeams } from '../api';
+import { useSearch } from '../helpers/use-search';
 
 const MapTeamsToList = (teams: Team[]) => {
   return teams.map(team => {
@@ -19,6 +21,11 @@ const MapTeamsToList = (teams: Team[]) => {
 export function Teams() {
   const { data: teams, error, isLoading } = useQuery<Team[]>(['teams'], getTeams);
 
+  const [filter, handleChangeFilter, filteredTeams] = useSearch({
+    searchKey: 'name',
+    objects: teams,
+  });
+
   if (isLoading) {
     return <Spinner />;
   }
@@ -26,7 +33,12 @@ export function Teams() {
   if (teams) {
     return (
       <Layout title="Teams" showBackButton={false}>
-        <List items={MapTeamsToList(teams)} />
+        <Search
+          searchValue={filter}
+          onChange={handleChangeFilter}
+          placeholder="Start typing to filter teams"
+        />
+        <List items={MapTeamsToList(filteredTeams)} />
       </Layout>
     );
   }

@@ -109,17 +109,7 @@ export const reset = css`
   }
 
   /* Make it clear that interactive elements are interactive */
-  :where(
-      a[href],
-      area,
-      button,
-      input,
-      label[for],
-      select,
-      summary,
-      textarea,
-      [tabindex]:not([tabindex*='-'])
-    ) {
+  :where(a[href], area, button, label[for], select, summary, [tabindex]:not([tabindex*='-'])) {
     cursor: pointer;
     touch-action: manipulation;
   }
@@ -133,15 +123,16 @@ export const reset = css`
 
   /* Animate focus outline */
   @media (prefers-reduced-motion: no-preference) {
-    :focus-visible {
-      transition: outline-offset 145ms cubic-bezier(0.25, 0, 0.4, 1);
+    :where(:not(input)) {
+      &:focus-visible {
+        transition: outline-offset 145ms cubic-bezier(0.25, 0, 0.4, 1);
+      }
+
+      &:where(:not(:active)):focus-visible {
+        transition-duration: 0.25s;
+        outline-offset: 5px;
+      }
     }
-    :where(:not(:active)):focus-visible {
-      transition-duration: 0.25s;
-    }
-  }
-  :where(:not(:active)):focus-visible {
-    outline-offset: 5px;
   }
 
   /* Make sure users can't select button text */
