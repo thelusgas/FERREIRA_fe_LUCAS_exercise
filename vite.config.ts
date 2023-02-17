@@ -10,6 +10,7 @@ export default defineConfig({
       { find: '@interfaces', replacement: path.resolve(__dirname, 'src/interfaces') },
       { find: '@pages', replacement: path.resolve(__dirname, 'src/pages') },
       { find: '@styles', replacement: path.resolve(__dirname, 'src/styles') },
+      { find: '@tests', replacement: path.resolve(__dirname, 'src/tests') },
     ],
   },
   server: {

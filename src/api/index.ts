@@ -1,7 +1,7 @@
 import { Url } from '@api/url';
 import { Team, TeamExtended, TeamMember } from '@interfaces/data';
 
-const getData = async <T extends object>(url: string): Promise<T> => {
+export const getData = async <T extends object>(url: string): Promise<T> => {
   const res = await fetch(url);
 
   if (!res.ok) {

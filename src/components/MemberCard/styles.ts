@@ -43,3 +43,10 @@ export const Image = styled.img`
   object-fit: contain;
   border-radius: 50%;
 `;
+
+export const TeamLead = styled.span`
+  font-weight: 500;
+  font-size: var(--font-base);
+  font-family: var(--font-family-secondary);
+  align-self: end;
+`;

@@ -5,7 +5,7 @@ import { useQueries } from '@tanstack/react-query';
 import { Card } from '../Card';
 import { Container } from './styles';
 
-interface RegularListProps {
+export interface RegularListProps {
   items: ListItem[];
 }
 
@@ -14,7 +14,7 @@ interface ItemQuery<T extends object> {
   queryFn: () => Promise<T>;
 }
 
-interface AsyncListProps<T extends object> {
+export interface AsyncListProps<T extends object> {
   parseFn: (data: T) => ListItem;
   queryKey: string[];
   queries: ItemQuery<T>[];
@@ -34,7 +34,7 @@ export type ListProps<T extends object> =
 
 function RegularList({ items }: RegularListProps) {
   return (
-    <Container>
+    <Container data-testid="regular-list">
       {items.map(item => {
         return (
           <Card key={`${item.id}`} id={item.id} url={item.url}>
@@ -73,7 +73,7 @@ function AsyncList<T extends object>({ queries, queryKey, parseFn, search }: Asy
   };
 
   return (
-    <Container>
+    <Container data-testid="async-list">
       {res.map(r => {
         const itemKey = `list-item-${Math.random()}`;
         if (r.isLoading) {

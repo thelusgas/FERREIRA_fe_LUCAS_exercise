@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
+import { AllTheProviders } from '@tests/utils';
+import * as React from 'react';
 
-import Header from '..';
+import { Header } from '..';
 
 const mockUseNavigate = jest.fn();
 
@@ -24,25 +25,27 @@ describe('Header', () => {
   });
 
   it('should render header', () => {
-    render(<Header title="Header" />);
+    render(<Header title="Header" />, { wrapper: AllTheProviders });
 
     expect(screen.getByText('Header')).toBeInTheDocument();
   });
 
   it('should render back button in header', () => {
-    render(<Header title="Header" showBackButton />);
+    render(<Header title="Header" showBackButton />, { wrapper: AllTheProviders });
 
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    const button = screen.queryByRole('button');
+    expect(button).toBeInTheDocument();
   });
 
   it('should not render back button in header', () => {
-    render(<Header title="Header" showBackButton={false} />);
+    render(<Header title="Header" showBackButton={false} />, { wrapper: AllTheProviders });
 
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    const button = screen.queryByRole('button');
+    expect(button).toBeNull();
   });
 
   it('should navigate back when back button is clicked', () => {
-    render(<Header title="Header" showBackButton />);
+    render(<Header title="Header" showBackButton />, { wrapper: AllTheProviders });
 
     fireEvent.click(screen.getByRole('button'));
 

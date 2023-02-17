@@ -27,7 +27,7 @@ export function Teams() {
   });
 
   if (isLoading) {
-    return <Spinner />;
+    return <Spinner isFullPage />;
   }
 
   if (teams) {

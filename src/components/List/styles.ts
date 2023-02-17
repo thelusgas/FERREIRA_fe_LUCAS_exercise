@@ -6,5 +6,4 @@ export const Container = styled.ul`
   grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   grid-auto-rows: 1fr;
   gap: 2rem;
-  grid-template-rows: auto;
 `;

@@ -17,15 +17,16 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@temposoftware/tempo-i18n": ["./src/translate.ts"],
       "@api/*": ["./src/api/*"],
       "@components/*": ["./src/components/*"],
       "@interfaces/*": ["./src/interfaces/*"],
       "@pages/*": ["./src/pages/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@tests/*": ["./src/tests/*"]
     }
   },
-  "include": ["src", "eslintrc.cjs"],
+  "types": ["node", "jest", "@testing-library/jest-dom"],
+  "include": ["src", "eslintrc.cjs", "jest-setup.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "exclude": ["node_modules"]
 }

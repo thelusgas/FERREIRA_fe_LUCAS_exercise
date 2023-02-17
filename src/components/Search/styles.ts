@@ -8,7 +8,7 @@ export const Input = styled.input`
 
   min-width: 20rem;
 
-  margin-block: 2rem;
+  margin-block: 1rem 2rem;
 
   background: ${({ theme }) => theme.color.secondaryContainer};
   color: ${({ theme }) => theme.color.onSecondaryContainer};

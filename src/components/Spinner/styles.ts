@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 const spinnerAnimation = keyframes`
 from {
@@ -9,7 +9,7 @@ from {
     }
 `;
 
-export const Spinner = styled.div`
+export const Spinner = styled.div<{ $isFullPage: boolean }>`
   height: 4rem;
   width: 4rem;
   border: 4px solid ${({ theme }) => theme.color.primaryContainer};
@@ -23,5 +23,9 @@ export const Spinner = styled.div`
   display: flex;
 
   // center spinner when loading page
-  grid-row: 2;
+  ${({ $isFullPage }) =>
+    $isFullPage &&
+    css`
+      grid-row: 2;
+    `};
 `;

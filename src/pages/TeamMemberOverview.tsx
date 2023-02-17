@@ -23,7 +23,7 @@ export function TeamMemberOverview() {
   } = useQuery<TeamMember>(['team', 'member', memberId], () => getTeamMember(memberId));
 
   if (isLoading) {
-    return <Spinner />;
+    return <Spinner isFullPage />;
   }
 
   if (member) {

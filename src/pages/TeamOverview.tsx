@@ -28,11 +28,19 @@ export function TeamOverview() {
     error,
   } = useQuery<TeamExtended>(['teams', teamId], () => getTeamExtended(teamId));
 
+  const teamLead = useQuery<TeamMember>(
+    ['team', 'member', team?.teamLeadId],
+    () => getTeamMember(team?.teamLeadId as string),
+    {
+      enabled: !!team,
+    }
+  );
+
   if (isLoading) {
-    return <Spinner />;
+    return <Spinner isFullPage />;
   }
 
-  if (team) {
+  if (team && teamLead) {
     const queries = team.teamMemberIds.map(id => {
       return {
         discriminator: id as keyof TeamMember & string,
@@ -47,6 +55,10 @@ export function TeamOverview() {
           onChange={handleChangeFilter}
           placeholder="Start typing to filter team members"
         />
+        {teamLead.isLoading && <Spinner />}
+        {teamLead.isError && <div>{teamLead.error as string}</div>}
+        {teamLead.isSuccess && <MemberCard member={teamLead.data} isTeamLead />}
+
         <List<TeamMember>
           queryKey={['team', 'member']}
           queries={queries}
